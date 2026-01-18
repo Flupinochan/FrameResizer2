@@ -1,6 +1,9 @@
 import { app, BrowserWindow, nativeTheme } from "electron";
 import started from "electron-squirrel-startup";
 import path from "node:path";
+import { EVENT_THEME_CHANGED } from "./ipc";
+
+let mainWindow: BrowserWindow | null = null;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -9,7 +12,7 @@ if (started) {
 
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -26,6 +29,9 @@ const createWindow = () => {
     );
   }
 
+  // テーマ初期化通知
+  mainWindow.webContents.on("did-finish-load", () => updateTheme());
+
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
@@ -34,8 +40,13 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
+  // テーマ設定
   nativeTheme.themeSource = "system";
+
   createWindow();
+
+  // テーマ変更を通知
+  nativeTheme.on("updated", () => updateTheme());
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -55,5 +66,9 @@ app.on("activate", () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+function updateTheme() {
+  mainWindow?.webContents.send(
+    EVENT_THEME_CHANGED,
+    nativeTheme.shouldUseDarkColors,
+  );
+}
