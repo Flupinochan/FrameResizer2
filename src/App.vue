@@ -1,9 +1,17 @@
 <template>
-  <h1>💖 Hello World!</h1>
-  <p>Welcome to your Electron application.</p>
-  <v-btn>test</v-btn>
+  <v-container>
+    <InputSection />
+    <OutputSection />
+    <BorderSection />
+    <ResizeSection />
+  </v-container>
 </template>
 
-<script setup>
-console.log('👋 This message is being logged by "App.vue", included via Vite');
+<script setup lang="ts">
+import BorderSection from "./components/BorderSection.vue";
+import InputSection from "./components/InputSection.vue";
+import OutputSection from "./components/OutputSection.vue";
+import ResizeSection from "./components/ResizeSection.vue";
 </script>
+
+<style scoped></style>
