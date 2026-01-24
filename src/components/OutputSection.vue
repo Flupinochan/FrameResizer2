@@ -12,7 +12,7 @@
         <v-col cols="6">
           <v-btn
             block
-            @click=""
+            @click="handleOpenDirectoryDialog"
             prepend-icon="$folderImage"
             :disabled="outputPathStore.isInputOutputSame"
             >フォルダ選択</v-btn
@@ -48,6 +48,14 @@ import { useOutputPathStore } from "../stores/outputPath";
 import BaseSection from "./BaseSection.vue";
 
 const outputPathStore = useOutputPathStore();
+
+async function handleOpenDirectoryDialog() {
+  const dirPath = await window.electron.openDirDialog();
+  if (dirPath === "") return;
+
+  outputPathStore.clear();
+  outputPathStore.setPath(dirPath);
+}
 </script>
 
 <style lang="scss" scoped>

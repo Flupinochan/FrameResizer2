@@ -1,4 +1,5 @@
-export const EVENT_THEME_CHANGED = "theme-changed";
-export const EVENT_OPEN_FILE_DIALOG = "open-file-dialog";
-export const EVENT_OPEN_DIRECTORY_DIALOG = "open-directory-dialog";
-export const EVENT_GET_DIRECTORY_NAME = "get-directory-name";
+export const THEME_CHANGED = "theme-changed";
+export const OPEN_FILE_DIALOG_FOR_IMAGES = "open-file-dialog-for-images";
+export const OPEN_DIR_DIALOG_FOR_IMAGES = "open-dir-dialog-for-images";
+export const OPEN_DIR_DIALOG = "open-dir-dialog";
+export const EXTRACT_DIR_NAME_FROM_PATH = "extract-dir-name-from-path";

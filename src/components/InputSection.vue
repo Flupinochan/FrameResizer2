@@ -51,7 +51,7 @@ const outputPathsStore = useOutputPathStore();
 
 async function handleOpenFileDialog() {
   await handleOpenPathDialog(
-    () => window.electron.openFileDialog(),
+    () => window.electron.openFileDialogForImages(),
     inputPathsStore,
     outputPathsStore,
   );
@@ -59,7 +59,7 @@ async function handleOpenFileDialog() {
 
 async function handleOpenDirectoryDialog() {
   await handleOpenPathDialog(
-    () => window.electron.openDirectoryDialog(true),
+    () => window.electron.openDirDialogForImages(),
     inputPathsStore,
     outputPathsStore,
   );

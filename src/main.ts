@@ -10,10 +10,11 @@ import started from "electron-squirrel-startup";
 import fs from "fs";
 import path from "node:path";
 import {
-  EVENT_GET_DIRECTORY_NAME,
-  EVENT_OPEN_DIRECTORY_DIALOG,
-  EVENT_OPEN_FILE_DIALOG,
-  EVENT_THEME_CHANGED,
+  EXTRACT_DIR_NAME_FROM_PATH,
+  OPEN_DIR_DIALOG,
+  OPEN_DIR_DIALOG_FOR_IMAGES,
+  OPEN_FILE_DIALOG_FOR_IMAGES,
+  THEME_CHANGED,
 } from "./ipc";
 import { PathHandler } from "./services/PathHandler";
 
@@ -82,45 +83,45 @@ app.on("activate", () => {
 });
 
 function updateTheme() {
-  mainWindow?.webContents.send(
-    EVENT_THEME_CHANGED,
-    nativeTheme.shouldUseDarkColors,
-  );
+  mainWindow?.webContents.send(THEME_CHANGED, nativeTheme.shouldUseDarkColors);
 }
 
 /**
  * ファイル選択
  * そのまま選択したファイルパス一覧を返却
  */
-ipcMain.handle(EVENT_OPEN_FILE_DIALOG, async (_event): Promise<string[]> => {
-  if (!mainWindow) return [];
+ipcMain.handle(
+  OPEN_FILE_DIALOG_FOR_IMAGES,
+  async (_event): Promise<string[]> => {
+    if (!mainWindow) return [];
 
-  const options = {
-    title: "Select Image",
-    buttonLabel: "Select",
-    defaultPath: app.getPath("desktop"),
-    properties: ["openFile", "multiSelections"],
-    filters: [
-      { name: "Image", extensions: IMAGE_EXTENSIONS },
-      { name: "All Files", extensions: ["*"] },
-    ],
-  } satisfies OpenDialogOptions;
+    const options = {
+      title: "Select Images",
+      buttonLabel: "Select",
+      defaultPath: app.getPath("desktop"),
+      properties: ["openFile", "multiSelections"],
+      filters: [
+        { name: "Image", extensions: IMAGE_EXTENSIONS },
+        { name: "All Files", extensions: ["*"] },
+      ],
+    } satisfies OpenDialogOptions;
 
-  const result = await dialog.showOpenDialog(mainWindow, options);
-  return result.canceled ? [] : result.filePaths;
-});
+    const result = await dialog.showOpenDialog(mainWindow, options);
+    return result.canceled ? [] : result.filePaths;
+  },
+);
 
 /**
  * ディレクトリ選択
  * 選択したディレクトリ配下の画像ファイルのパス一覧を返却
  */
 ipcMain.handle(
-  EVENT_OPEN_DIRECTORY_DIALOG,
-  async (_event, isInput: boolean): Promise<string[]> => {
+  OPEN_DIR_DIALOG_FOR_IMAGES,
+  async (_event): Promise<string[]> => {
     if (!mainWindow) return [];
 
     const options = {
-      title: isInput ? "Select Input Directory" : "Select Output Directory",
+      title: "Select Directory",
       buttonLabel: "Select",
       defaultPath: app.getPath("desktop"),
       properties: ["openDirectory"],
@@ -140,11 +141,27 @@ ipcMain.handle(
   },
 );
 
+ipcMain.handle(OPEN_DIR_DIALOG, async (_event): Promise<string> => {
+  if (!mainWindow) return "";
+
+  const options = {
+    title: "Select Directory",
+    buttonLabel: "Select",
+    defaultPath: app.getPath("desktop"),
+    properties: ["openDirectory"],
+  } satisfies OpenDialogOptions;
+
+  const result = await dialog.showOpenDialog(mainWindow, options);
+  if (result.canceled) return "";
+
+  return result.filePaths[0];
+});
+
 /**
  * ディレクトリ名を返却
  */
 ipcMain.handle(
-  EVENT_GET_DIRECTORY_NAME,
+  EXTRACT_DIR_NAME_FROM_PATH,
   async (_event, filePath: string): Promise<string> => {
     const ph = new PathHandler(filePath);
     return ph.directoryName;

@@ -1,24 +1,27 @@
 import { contextBridge, ipcRenderer } from "electron";
 import {
-  EVENT_GET_DIRECTORY_NAME,
-  EVENT_OPEN_DIRECTORY_DIALOG,
-  EVENT_OPEN_FILE_DIALOG,
-  EVENT_THEME_CHANGED,
+  EXTRACT_DIR_NAME_FROM_PATH,
+  OPEN_DIR_DIALOG,
+  OPEN_DIR_DIALOG_FOR_IMAGES,
+  OPEN_FILE_DIALOG_FOR_IMAGES,
+  THEME_CHANGED,
 } from "./ipc";
 
 // Backend API定義
 contextBridge.exposeInMainWorld("electron", {
   // テーマ検知
   onThemeChanged: (callback: (isDark: boolean) => void) => {
-    ipcRenderer.on(EVENT_THEME_CHANGED, (_event, isDark) => callback(isDark));
+    ipcRenderer.on(THEME_CHANGED, (_event, isDark) => callback(isDark));
   },
-  // ファイル選択
-  openFileDialog: (): Promise<string[]> =>
-    ipcRenderer.invoke(EVENT_OPEN_FILE_DIALOG),
-  // ディレクトリ選択
-  openDirectoryDialog: (isInput: boolean): Promise<string[]> =>
-    ipcRenderer.invoke(EVENT_OPEN_DIRECTORY_DIALOG, isInput),
+  // ファイル選択し画像一覧を取得
+  openFileDialogForImages: (): Promise<string[]> =>
+    ipcRenderer.invoke(OPEN_FILE_DIALOG_FOR_IMAGES),
+  // ディレクトリ選択し画像一覧を取得
+  openDirDialogForImages: (): Promise<string[]> =>
+    ipcRenderer.invoke(OPEN_DIR_DIALOG_FOR_IMAGES),
   // ディレクトリ名取得
-  getDirFullPath: (filePath: string): Promise<string> =>
-    ipcRenderer.invoke(EVENT_GET_DIRECTORY_NAME, filePath),
+  extractDirNameFromPath: (filePath: string): Promise<string> =>
+    ipcRenderer.invoke(EXTRACT_DIR_NAME_FROM_PATH, filePath),
+  // ディレクトリ選択しディレクトリパスを取得
+  openDirDialog: (): Promise<string> => ipcRenderer.invoke(OPEN_DIR_DIALOG),
 });

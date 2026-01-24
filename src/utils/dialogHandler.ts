@@ -29,7 +29,7 @@ export async function handleOpenPathDialog<
   if (!outputPathsStore.isInputOutputSame) return;
 
   // set output path
-  const outputDirFullPath = await window.electron.getDirFullPath(
+  const outputDirFullPath = await window.electron.extractDirNameFromPath(
     inputImagePaths[0],
   );
   outputPathsStore.setPath(outputDirFullPath);

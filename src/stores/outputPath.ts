@@ -18,8 +18,8 @@ export const useOutputPathStore = defineStore("outputPath", () => {
   }
 
   return {
-    outputPath: outputPath,
-    setPath: setPath,
+    outputPath,
+    setPath,
     isInputOutputSame,
     switchIsInputOutputSame,
     clear,
