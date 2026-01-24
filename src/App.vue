@@ -1,9 +1,10 @@
 <template>
-  <v-container>
+  <v-container class="d-flex flex-column ga-4">
     <InputSection />
     <OutputSection />
     <BorderSection />
     <ResizeSection />
+    <v-btn color="primary">実行</v-btn>
   </v-container>
 </template>
 
