@@ -35,7 +35,7 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
-    "electron": "40.0.0",
+    "electron": "^40.0.0",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-oxlint": "^1.39.0",
@@ -55,9 +55,10 @@
   "productName": "frameresizer2",
   "scripts": {
     "lint": "eslint --ext .ts,.tsx .",
-    "make": "electron-forge make",
+    "make": "electron-forge make && npm run rebuild && node scripts/post-build.js",
     "package": "electron-forge package",
     "publish": "electron-forge publish",
+    "rebuild": "electron-rebuild -w sharp",
     "start": "electron-forge start"
   },
   "version": "1.0.0"
