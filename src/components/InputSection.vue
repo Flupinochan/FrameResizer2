@@ -19,13 +19,13 @@
       <v-row>
         <v-col cols="12">
           <v-sheet border rounded max-height="140" class="overflow-y-auto">
-            <template v-if="inputPathsStore.inputPaths.length === 0">
+            <template v-if="inputPathsStore.paths.length === 0">
               <div class="text-medium-emphasis text-body-2 pa-2">InputPath</div>
             </template>
 
             <v-list v-else density="compact">
               <v-list-item
-                v-for="(path, index) in inputPathsStore.inputPaths"
+                v-for="(path, index) in inputPathsStore.paths"
                 :key="index"
               >
                 <v-list-item-title class="text-body-3">

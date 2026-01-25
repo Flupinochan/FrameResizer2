@@ -7,11 +7,8 @@
  * @returns
  */
 export async function handleOpenPathDialog<
-  InputStore extends { clear: () => void; addPaths: (paths: string[]) => void },
-  OutputStore extends {
-    isInputOutputSame: boolean;
-    setPath: (path: string) => void;
-  },
+  InputStore extends { paths: string[] },
+  OutputStore extends { path: string; isInputOutputSame: boolean },
 >(
   openDialog: () => Promise<string[]>,
   inputPathsStore: InputStore,
@@ -22,8 +19,8 @@ export async function handleOpenPathDialog<
   if (inputImagePaths.length === 0) return;
 
   // set input paths
-  inputPathsStore.clear();
-  inputPathsStore.addPaths(inputImagePaths);
+  inputPathsStore.paths = [];
+  inputPathsStore.paths.push(...inputImagePaths);
 
   // is input directory same as output directory?
   if (!outputPathsStore.isInputOutputSame) return;
@@ -32,5 +29,5 @@ export async function handleOpenPathDialog<
   const outputDirFullPath = await window.electron.extractDirNameFromPath(
     inputImagePaths[0],
   );
-  outputPathsStore.setPath(outputDirFullPath);
+  outputPathsStore.path = outputDirFullPath;
 }

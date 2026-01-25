@@ -2,15 +2,16 @@
   <BaseSection
     title="リサイズ設定"
     :show-switch="true"
-    v-model:switch-value="isEnabled"
+    v-model:switch-value="resizeStore.isFeatureEnabled"
   >
     <v-container>
       <!-- リサイズ基準選択 -->
       <v-row class="align-center">
         <v-col cols="12">
           <v-radio-group
-            v-model="resizeBasis"
-            :disabled="!isEnabled"
+            color="primary"
+            v-model="resizeStore.targetDimension"
+            :disabled="!resizeStore.isFeatureEnabled"
             inline
             hide-details
           >
@@ -24,11 +25,11 @@
       <v-row>
         <v-col cols="12">
           <v-text-field
-            v-model.number="resizeValue"
+            v-model.number="resizeStore.targetSize"
             type="number"
             :min="1"
             suffix="px"
-            :disabled="!isEnabled"
+            :disabled="!resizeStore.isFeatureEnabled"
           />
         </v-col>
       </v-row>
@@ -37,12 +38,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { useResizeStore } from "../stores/resize";
 import BaseSection from "./BaseSection.vue";
 
-const isEnabled = ref(false);
-const resizeBasis = ref<"width" | "height">("width");
-const resizeValue = ref<number>(708);
+const resizeStore = useResizeStore();
 </script>
 
 <style scoped></style>
