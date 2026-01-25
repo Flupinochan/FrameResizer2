@@ -1,3 +1,5 @@
+import { ConvertBatchRequest } from "../src/main";
+
 export {};
 
 declare global {
@@ -8,6 +10,7 @@ declare global {
       openDirDialogForImages: () => Promise<string[]>;
       extractDirNameFromPath: (filePath: string) => Promise<string>;
       openDirDialog: () => Promise<string>;
+      execConvertImages: (request: ConvertBatchRequest) => Promise<void>;
     };
   }
 }

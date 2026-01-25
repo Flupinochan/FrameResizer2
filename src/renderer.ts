@@ -1,7 +1,12 @@
 import { createApp } from "vue";
 
 // Vuetify
-import { mdiFileImage, mdiFolderImage } from "@mdi/js";
+import {
+  mdiAlertCircleOutline,
+  mdiCheckCircleOutline,
+  mdiFileImage,
+  mdiFolderImage,
+} from "@mdi/js";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
@@ -21,6 +26,8 @@ const vuetify = createVuetify({
       ...aliases,
       fileImage: mdiFileImage,
       folderImage: mdiFolderImage,
+      successImage: mdiCheckCircleOutline,
+      errorImage: mdiAlertCircleOutline,
     },
     sets: {
       mdi,

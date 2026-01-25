@@ -10,13 +10,17 @@ import started from "electron-squirrel-startup";
 import fs from "fs";
 import path from "node:path";
 import {
+  EXEC_CONVERT_IMAGES,
   EXTRACT_DIR_NAME_FROM_PATH,
   OPEN_DIR_DIALOG,
   OPEN_DIR_DIALOG_FOR_IMAGES,
   OPEN_FILE_DIALOG_FOR_IMAGES,
   THEME_CHANGED,
 } from "./ipc";
-import { PathHandler } from "./services/PathHandler";
+import {
+  CustomizeImage,
+  ImageConversionSettings,
+} from "./services/CustomiseImage";
 
 let mainWindow: BrowserWindow | null = null;
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"];
@@ -158,12 +162,45 @@ ipcMain.handle(OPEN_DIR_DIALOG, async (_event): Promise<string> => {
 });
 
 /**
- * ディレクトリ名を返却
+ * ディレクトリパスを返却
  */
 ipcMain.handle(
   EXTRACT_DIR_NAME_FROM_PATH,
   async (_event, filePath: string): Promise<string> => {
-    const ph = new PathHandler(filePath);
-    return ph.directoryName;
+    const fullPath = path.resolve(filePath);
+    return path.dirname(fullPath);
+  },
+);
+
+/**
+ * 画像処理実行
+ */
+export interface ConvertBatchRequest {
+  sourceImagePaths: string[];
+  outputDirectoryPath: string;
+  outputHeight?: number;
+  outputWidth?: number;
+  borderSize?: number;
+  borderColor?: string;
+}
+
+ipcMain.handle(
+  EXEC_CONVERT_IMAGES,
+  async (_event, req: ConvertBatchRequest): Promise<void> => {
+    const inputPaths = req.sourceImagePaths;
+    const outputDirPath = req.outputDirectoryPath;
+    const settings: ImageConversionSettings = {
+      outputHeight: req.outputHeight,
+      outputWidth: req.outputWidth,
+      borderSize: req.borderSize,
+      borderColor: req.borderColor,
+    };
+
+    const customizeImage = new CustomizeImage(settings);
+
+    for (const inputPath of inputPaths) {
+      const outputFilePath = path.join(outputDirPath, path.basename(inputPath));
+      await customizeImage.convert(inputPath, outputFilePath);
+    }
   },
 );
