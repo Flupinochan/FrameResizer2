@@ -52,8 +52,10 @@ const createWindow = () => {
   // テーマ初期化通知
   mainWindow.webContents.on("did-finish-load", () => updateTheme());
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // 開発環境の場合のみDevToolsを開く
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.webContents.openDevTools();
+  }
 };
 
 // This method will be called when Electron has finished

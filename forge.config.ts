@@ -12,6 +12,7 @@ import { FuseV1Options, FuseVersion } from "@electron/fuses";
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    icon: "./build/icons/win/icon.ico",
   },
   rebuildConfig: {
     onlyModules: ["sharp", "@img", "detect-libc", "semver"],
@@ -19,9 +20,20 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({}),
     new MakerZIP({}, ["darwin"]),
-    new MakerDMG({ format: "ULFO" }),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerDMG({
+      format: "ULFO",
+      icon: "./build/icons/mac/icon.icns",
+    }),
+    new MakerRpm({
+      options: {
+        icon: "./build/icons/png/512x512.png",
+      },
+    }),
+    new MakerDeb({
+      options: {
+        icon: "./build/icons/png/512x512.png",
+      },
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
