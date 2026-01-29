@@ -1,6 +1,5 @@
 import { rename, unlink } from "fs/promises";
 import path from "path";
-import sharp from "sharp";
 
 export interface ImageConversionSettings {
   outputHeight?: number;
@@ -24,6 +23,12 @@ export class CustomizeImage implements ICustomizeImage {
     this.outputWidth = settings.outputWidth ?? 0;
     this.borderSize = settings.borderSize ?? 0;
     this.borderColor = settings.borderColor;
+  }
+
+  private async getSharp() {
+    // Dynamically import sharp to avoid loading it at startup
+    const sharp = (await import("sharp")).default;
+    return sharp;
   }
 
   async convert(
@@ -59,6 +64,7 @@ export class CustomizeImage implements ICustomizeImage {
     sourceImagePath: string,
     outputImagePath: string,
   ): Promise<void> {
+    const sharp = await this.getSharp();
     const image = sharp(sourceImagePath);
     const metadata = await image.metadata();
 
@@ -85,6 +91,7 @@ export class CustomizeImage implements ICustomizeImage {
     sourceImagePath: string,
     outputImagePath: string,
   ): Promise<void> {
+    const sharp = await this.getSharp();
     const image = sharp(sourceImagePath);
     const metadata = await image.metadata();
 
@@ -100,6 +107,7 @@ export class CustomizeImage implements ICustomizeImage {
     sourceImagePath: string,
     outputImagePath: string,
   ): Promise<void> {
+    const sharp = await this.getSharp();
     await sharp(sourceImagePath)
       .extend({
         top: this.borderSize,

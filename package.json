@@ -3,13 +3,6 @@
     "email": "flupino@metalmental.net",
     "name": "Flupinochan"
   },
-  "build": {
-    "asar": true,
-    "asarUnpack": [
-      "**/node_modules/sharp/**/*",
-      "**/node_modules/@img/**/*"
-    ]
-  },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
     "pinia": "^3.0.4",
@@ -20,6 +13,7 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.11.1",
     "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-dmg": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.11.1",
     "@electron-forge/maker-squirrel": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
@@ -35,11 +29,13 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
+    "asar": "^3.2.0",
     "electron": "^40.0.0",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-oxlint": "^1.39.0",
     "eslint-plugin-vue": "^10.7.0",
+    "node-addon-api": "^8.5.0",
     "sass": "^1.97.3",
     "sass-loader": "^16.0.6",
     "typescript": "~5.9.3",
@@ -55,7 +51,7 @@
   "productName": "frameresizer2",
   "scripts": {
     "lint": "eslint --ext .ts,.tsx .",
-    "make": "electron-forge make && npm run rebuild && node scripts/post-build.js",
+    "make": "electron-forge make && npm run rebuild && node ./scripts/post-build.js",
     "package": "electron-forge package",
     "publish": "electron-forge publish",
     "rebuild": "electron-rebuild -w sharp",

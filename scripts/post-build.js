@@ -1,54 +1,64 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
+import { fileURLToPath } from "url";
 
-const srcDir = path.resolve(__dirname, "..", "node_modules");
-const destBaseDir = path.resolve(
-  __dirname,
-  "..",
-  "out",
-  "frameresizer2-win32-x64",
-  "resources",
-  "node_modules",
-);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Modules to copy outside ASAR
-const modulesToCopy = ["sharp", "@img", "detect-libc", "semver", "@img/colour"];
+console.log("Running post-build tasks...");
 
-function copyModule(moduleName) {
-  const srcPath = path.join(srcDir, moduleName);
-  const destPath = path.join(destBaseDir, moduleName);
+// Copy native modules directly on macOS
+if (process.platform === "darwin") {
+  const outDir = path.join(__dirname, "../out");
+  const appName = "frameresizer2-darwin-arm64";
+  const appPath = path.join(
+    outDir,
+    appName,
+    "frameresizer2.app",
+    "Contents",
+    "Resources",
+  );
 
-  if (!fs.existsSync(srcPath)) {
-    console.log(`⚠ Source path not found: ${srcPath}`);
-    return;
+  const resourcesNodeModules = path.join(appPath, "node_modules");
+  const projectNodeModules = path.join(__dirname, "../node_modules");
+
+  const modulesToCopy = [
+    "sharp",
+    "@img",
+    "detect-libc",
+    "semver",
+    "queue",
+    "util-deprecate",
+  ];
+
+  try {
+    console.log("📦 Copying native modules to app resources...");
+
+    // Create node_modules directory if it doesn't exist
+    if (!fs.existsSync(resourcesNodeModules)) {
+      fs.mkdirSync(resourcesNodeModules, { recursive: true });
+    }
+
+    // Copy all required modules
+    for (const moduleName of modulesToCopy) {
+      const moduleSrc = path.join(projectNodeModules, moduleName);
+      const moduleDest = path.join(resourcesNodeModules, moduleName);
+
+      if (fs.existsSync(moduleSrc)) {
+        try {
+          execSync(`cp -r "${moduleSrc}" "${moduleDest}"`, {
+            stdio: "inherit",
+          });
+          console.log(`✓ ${moduleName} copied successfully!`);
+        } catch (err) {
+          console.warn(`⚠️ Warning: Failed to copy ${moduleName}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ Warning: Failed to copy native modules:", error.message);
   }
-
-  // Remove existing destination
-  if (fs.existsSync(destPath)) {
-    fs.rmSync(destPath, { recursive: true, force: true });
-  }
-
-  // Create parent directory
-  fs.mkdirSync(path.dirname(destPath), { recursive: true });
-
-  // Copy the module
-  fs.cpSync(srcPath, destPath, { recursive: true });
-  console.log(`✓ Copied ${moduleName}`);
 }
 
-try {
-  console.log("Running post-build tasks...");
-
-  // Ensure destination directory exists
-  fs.mkdirSync(destBaseDir, { recursive: true });
-
-  // Copy modules
-  modulesToCopy.forEach((moduleName) => {
-    copyModule(moduleName);
-  });
-
-  console.log("✓ Post-build tasks completed successfully!");
-} catch (error) {
-  console.error("Error during post-build:", error);
-  process.exit(1);
-}
+console.log("✓ Post-build tasks completed successfully!");
