@@ -51,10 +51,10 @@
   "productName": "frameresizer2",
   "scripts": {
     "lint": "eslint --ext .ts,.tsx .",
-    "make": "electron-forge make && npm run rebuild && node ./scripts/post-build.js",
-    "package": "electron-forge package",
+    "make": "npm run rebuild && electron-forge make && node ./scripts/post-build.js",
+    "package": "npm run rebuild && electron-forge package",
     "publish": "electron-forge publish",
-    "rebuild": "electron-rebuild -w sharp",
+    "rebuild": "electron-rebuild -f -w sharp",
     "start": "electron-forge start"
   },
   "version": "1.0.0"

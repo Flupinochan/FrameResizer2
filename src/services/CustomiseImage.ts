@@ -1,5 +1,6 @@
 import { rename, unlink } from "fs/promises";
-import path from "path";
+import { createRequire } from "node:module";
+import path from "node:path";
 
 export interface ImageConversionSettings {
   outputHeight?: number;
@@ -27,8 +28,15 @@ export class CustomizeImage implements ICustomizeImage {
 
   private async getSharp() {
     // Dynamically import sharp to avoid loading it at startup
-    const sharp = (await import("sharp")).default;
-    return sharp;
+    try {
+      const sharp = (await import("sharp")).default;
+      return sharp;
+    } catch {
+      const resourcesSharpPath = path.join(process.resourcesPath, "sharp");
+      const require = createRequire(import.meta.url);
+      const sharp = require(resourcesSharpPath);
+      return sharp.default ?? sharp;
+    }
   }
 
   async convert(

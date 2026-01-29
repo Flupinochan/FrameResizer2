@@ -8,6 +8,7 @@ import {
 } from "electron";
 import started from "electron-squirrel-startup";
 import fs from "fs";
+import Module from "node:module";
 import path from "node:path";
 import {
   EXEC_CONVERT_IMAGES,
@@ -24,6 +25,21 @@ import {
 
 let mainWindow: BrowserWindow | null = null;
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"];
+
+const ensureNativeModulePaths = () => {
+  if (!app.isPackaged) return;
+
+  const resourcesRoot = process.resourcesPath;
+  const currentNodePath = process.env.NODE_PATH ?? "";
+
+  if (!currentNodePath.split(path.delimiter).includes(resourcesRoot)) {
+    process.env.NODE_PATH = currentNodePath
+      ? `${currentNodePath}${path.delimiter}${resourcesRoot}`
+      : resourcesRoot;
+    const moduleWithInit = Module as typeof Module & { _initPaths?: () => void };
+    moduleWithInit._initPaths?.();
+  }
+};
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -64,6 +80,8 @@ const createWindow = () => {
 app.on("ready", () => {
   // テーマ設定
   nativeTheme.themeSource = "system";
+
+  ensureNativeModulePaths();
 
   createWindow();
 

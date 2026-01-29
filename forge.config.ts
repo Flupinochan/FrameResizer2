@@ -11,7 +11,15 @@ import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: true,
+    asar: {
+      unpack: "**/node_modules/{sharp,@img,detect-libc,semver}/**",
+    },
+    extraResource: [
+      "node_modules/sharp",
+      "node_modules/@img",
+      "node_modules/detect-libc",
+      "node_modules/semver",
+    ],
     icon: "./build/icons/win/icon.ico",
   },
   rebuildConfig: {
